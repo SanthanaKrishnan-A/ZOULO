@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zoulu Shoes - Home</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    header {
+      background-color: #333;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    nav a {
+      margin: 0 15px;
+      color: white;
+      text-decoration: none;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    .banner {
+      position: relative;
+      width: 100%;
+      height: 400px;
+      background: url('images/img2.png') no-repeat center center;
+      background-size: cover;
+    }
+    .banner-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      text-align: center;
+    }
+    .banner-text h2 {
+      font-size: 36px;
+      margin: 0;
+    }
+    .banner-text p {
+      font-size: 18px;
+    }
+    main {
+      padding: 20px;
+      text-align: center;
+    }
+    .featured-products {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .product {
+      margin: 0 15px;
+      width: 200px;
+      text-align: center;
+    }
+    .product img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+    }
+    .product h3 {
+      font-size: 20px;
+      margin-top: 10px;
+    }
+    .product p {
+      font-size: 14px;
+      color: #777;
+    }
+    .get-started-btn {
+      background-color: #333;
+      color: white;
+      padding: 15px 25px;
+      font-size: 18px;
+      text-decoration: none;
+      border-radius: 5px;
+      display: inline-block;
+      margin-top: 20px;
+    }
+    .get-started-btn:hover {
+      background-color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Zoulu</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="cart.html">Cart (<span id="cart-count">0</span>)</a>
+    </nav>
+  </header>
+
+  <!-- Banner Section -->
+  <section class="banner">
+    <div class="banner-text">
+    </div>
+  </section>
+
+  <!-- Featured Products Section -->
+  <main>
+    <h2>Featured Products</h2>
+    <div class="featured-products">
+      <!-- Product 1 -->
+      <div class="product">
+        <img src="images/product1.jpg" alt="Product 1">
+        <h3>Stylish Running Shoes</h3>
+        <p>Perfect for your daily run.</p>
+      </div>
+      <!-- Product 2 -->
+      <div class="product">
+        <img src="images/product2.jpg" alt="Product 2">
+        <h3>Leather Casual Shoes</h3>
+        <p>Comfort and style combined.</p>
+      </div>
+      <!-- Product 3 -->
+      <div class="product">
+        <img src="images/product3.jpg" alt="Product 3">
+        <h3>Summer Flip Flops</h3>
+        <p>Light and comfortable for summer days.</p>
+      </div>
+    </div>
+
+    <!-- Get Started Button -->
+    <a href="products.html" class="get-started-btn">Get Started</a>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

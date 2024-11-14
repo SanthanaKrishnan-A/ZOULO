@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart - My Store</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
+    header { background-color: #333; color: white; padding: 15px; text-align: center; }
+    nav a { margin: 0 15px; color: white; text-decoration: none; }
+    nav a:hover { text-decoration: underline; }
+    .cart-container { padding: 20px; }
+    .cart-item { display: flex; align-items: center; border-bottom: 1px solid #ccc; padding: 10px 0; }
+    .cart-item img { max-width: 100px; max-height: 100px; object-fit: cover; border-radius: 5px; margin-right: 20px; }
+    .cart-item div { flex-grow: 1; }
+    .cart-item button { padding: 5px 10px; background-color: #d9534f; color: white; border: none; cursor: pointer; border-radius: 5px; }
+    .cart-item button:hover { background-color: #c9302c; }
+    .total-price { font-size: 18px; margin-top: 20px; text-align: right; font-weight: bold; }
+    .empty-message { text-align: center; font-size: 18px; color: #888; }
+    .buy-now-btn { display: block; width: 100%; padding: 15px; background-color: #5bc0de; color: white; text-align: center; font-size: 18px; border: none; border-radius: 5px; cursor: pointer; margin-top: 20px; }
+    .buy-now-btn:hover { background-color: #31b0d5; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Your Cart</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="cart.html">Cart (<span id="cart-count">0</span>)</a>
+    </nav>
+  </header>
+  <main class="cart-container">
+    <div id="cart-items"></div>
+    <div class="total-price hidden" id="total-container">
+      Total: ₹<span id="total-price">0.00</span>
+    </div>
+    <button class="buy-now-btn hidden" id="buy-now-btn" onclick="window.location.href='checkout.html'">Buy Now</button>
+    <div class="empty-message hidden" id="empty-message">Your cart is empty.</div>
+  </main>
+
+  <script>
+    // Function to remove an item from the cart
+    function removeFromCart(index) {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      cart.splice(index, 1); // Remove the item at the specified index
+      localStorage.setItem('cart', JSON.stringify(cart)); // Save the updated cart
+      displayCartItems(); // Re-display the updated cart
+    }
+
+    // Function to display cart items with images, names, prices, and remove buttons
+    function displayCartItems() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const cartItemsContainer = document.getElementById('cart-items');
+      const totalPriceElement = document.getElementById('total-price');
+      const totalContainer = document.getElementById('total-container');
+      const buyNowBtn = document.getElementById('buy-now-btn');
+      const emptyMessage = document.getElementById('empty-message');
+      
+      // Clear the container before displaying
+      cartItemsContainer.innerHTML = '';
+      let totalPrice = 0;
+
+      if (cart.length > 0) {
+        // Hide empty cart message and show total price and buy button
+        emptyMessage.classList.add('hidden');
+        totalContainer.classList.remove('hidden');
+        buyNowBtn.classList.remove('hidden');
+        
+        // Populate the cart items
+        cart.forEach((item, index) => {
+          const cartItem = document.createElement('div');
+          cartItem.classList.add('cart-item');
+          
+          // Product name, price, and remove button
+          cartItem.innerHTML = `
+            <div>
+              <h3>${item.name}</h3>
+              <p>₹${item.price}</p>
+            </div>
+            <button onclick="removeFromCart(${index})">Remove</button>
+          `;
+          
+          // Add the cart item to the cart container
+          cartItemsContainer.appendChild(cartItem);
+
+          // Update the total price
+          totalPrice += item.price;
+        });
+
+        // Update the total price on the page
+        totalPriceElement.textContent = totalPrice.toFixed(2);
+      } else {
+        // Show empty cart message and hide total price and buy button
+        emptyMessage.classList.remove('hidden');
+        totalContainer.classList.add('hidden');
+        buyNowBtn.classList.add('hidden');
+      }
+      
+      // Update the cart count
+      document.getElementById('cart-count').textContent = cart.length;
+    }
+
+    // Call displayCartItems when the page loads
+    displayCartItems();
+  </script>
+</body>
+</html>

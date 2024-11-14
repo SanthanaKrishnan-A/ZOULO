@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Modern Authentication</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 2.5rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #333;
+            font-size: 24px;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .form-group svg {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            color: #666;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            padding-left: 40px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            color: #333;
+            transition: border-color 0.2s;
+        }
+
+        input::placeholder {
+            color: #999;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #4285f4;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+            transition: background-color 0.2s;
+        }
+
+        .login-btn:hover {
+            background-color: #357abd;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 1rem 0;
+            position: relative;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background-color: #ddd;
+        }
+
+        .divider::before {
+            left: 0;
+        }
+
+        .divider::after {
+            right: 0;
+        }
+
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+            color: #555;
+            transition: background-color 0.2s;
+        }
+
+        .google-btn:hover {
+            background-color: #f8f9fa;
+        }
+
+        .google-btn img {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+        }
+
+        .user-info {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .user-info img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-info p {
+            margin: 0.5rem 0;
+            color: #333;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 0.5rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2 class="login-title">Sign in to Your Account</h2>
+        
+        <form id="login-form">
+            <div class="form-group">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                </svg>
+                <input type="email" id="email" placeholder="Email address" required>
+            </div>
+            
+            <div class="form-group">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0110 0v4"/>
+                </svg>
+                <input type="password" id="password" placeholder="Password" required>
+            </div>
+            
+            <button type="submit" class="login-btn">Sign In</button>
+            <div id="error-message" class="error-message"></div>
+        </form>
+
+        <div class="divider">or</div>
+
+        <button class="google-btn" id="customGoogleBtn">
+            <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" alt="Google logo">
+            Sign in with Google
+        </button>
+
+        <div id="g_id_onload"
+             data-client_id="218603422497-dvfderj7v72dcrtvst73ejdpljuad70f.apps.googleusercontent.com"
+             data-callback="handleCredentialResponse"
+             data-auto_prompt="false"
+             style="display: none;">
+        </div>
+
+        <div id="user-info" class="user-info">
+            <img id="user-image" src="" alt="Profile Picture">
+            <p id="user-name"></p>
+            <p id="user-email"></p>
+            <button onclick="signOut()" class="login-btn">Sign Out</button>
+        </div>
+    </div>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
+    <script>
+        // Initialize Google Sign-In
+        window.onload = function() {
+            // Check if Google API is loaded
+            if (typeof google === 'undefined') {
+                showError('Google API not loaded. Please check your internet connection.');
+                return;
+            }
+
+            try {
+                google.accounts.id.initialize({
+                    client_id: '218603422497-dvfderj7v72dcrtvst73ejdpljuad70f.apps.googleusercontent.com', // Replace with your actual client ID
+                    callback: handleCredentialResponse,
+                    auto_select: false,
+                    cancel_on_tap_outside: true
+                });
+
+                // Add click handler to custom button
+                const googleBtn = document.getElementById('customGoogleBtn');
+                if (googleBtn) {
+                    googleBtn.addEventListener('click', () => {
+                        try {
+                            google.accounts.id.prompt((notification) => {
+                                if (notification.isNotDisplayed()) {
+                                    showError('Google Sign-In popup not displayed: ' + notification.getNotDisplayedReason());
+                                } else if (notification.isSkippedMoment()) {
+                                    console.log('Sign-In skipped:', notification.getSkippedReason());
+                                } else if (notification.isDismissedMoment()) {
+                                    console.log('Sign-In dismissed:', notification.getDismissedReason());
+                                }
+                            });
+                        } catch (e) {
+                            showError('Error displaying Google Sign-In prompt: ' + e.message);
+                        }
+                    });
+                }
+            } catch (e) {
+                showError('Error initializing Google Sign-In: ' + e.message);
+            }
+
+            // Check for existing session
+            const token = localStorage.getItem('googleToken');
+            if (token) {
+                const payload = parseJwt(token);
+                if (payload) {
+                    updateUIWithUserInfo(payload);
+                }
+            }
+        };
+
+        // Parse JWT Token
+        function parseJwt(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (e) {
+                showError('Error parsing token: ' + e.message);
+                return null;
+            }
+        }
+
+        // Handle Google Sign-In Response
+        function handleCredentialResponse(response) {
+            try {
+                if (!response.credential) {
+                    throw new Error('No credential received');
+                }
+
+                const responsePayload = parseJwt(response.credential);
+                if (!responsePayload) {
+                    throw new Error('Failed to parse JWT token');
+                }
+
+                // Update UI with user info
+                updateUIWithUserInfo(responsePayload);
+                
+                // Store token
+                localStorage.setItem('googleToken', response.credential);
+                console.log("Login Success! User data:", responsePayload);
+            } catch (error) {
+                showError('Error handling Google Sign-In response: ' + error.message);
+            }
+        }
+
+        // Update UI with User Info
+        function updateUIWithUserInfo(payload) {
+            const elements = {
+                loginForm: document.getElementById('login-form'),
+                divider: document.querySelector('.divider'),
+                googleBtn: document.getElementById('customGoogleBtn'),
+                userInfo: document.getElementById('user-info'),
+                userImage: document.getElementById('user-image'),
+                userName: document.getElementById('user-name'),
+                userEmail: document.getElementById('user-email')
+            };
+
+            // Hide login elements
+            elements.loginForm.style.display = 'none';
+            elements.divider.style.display = 'none';
+            elements.googleBtn.style.display = 'none';
+
+            // Update and show user info
+            elements.userImage.src = payload.picture;
+            elements.userName.textContent = payload.name;
+            elements.userEmail.textContent = payload.email;
+            elements.userInfo.style.display = 'block';
+        }
+
+        // Sign Out Function
+        function signOut() {
+            localStorage.removeItem('googleToken');
+            
+            // Reset UI
+            document.getElementById('login-form').style.display = 'block';
+            document.querySelector('.divider').style.display = 'block';
+            document.getElementById('customGoogleBtn').style.display = 'flex';
+            document.getElementById('user-info').style.display = 'none';
+            
+            // Reinitialize Google Sign-In
+            google.accounts.id.initialize({
+                client_id: '218603422497-dvfderj7v72dcrtvst73ejdpljuad70f.apps.googleusercontent.com', // Replace with your actual client ID
+                callback: handleCredentialResponse
+            });
+        }
+
+        // Show Error Message
+        function showError(message) {
+            const errorElement = document.getElementById('error-message');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 5000);
+        }
+
+        // Handle Traditional Login Form
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                // Here you would typically make an API call to your backend
+                console.log('Login attempt with:', { email });
+                alert('Traditional login successful!\nEmail: ' + email);
+            } catch (error) {
+                showError('Login failed. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>

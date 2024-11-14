@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment - My Store</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
+    header { background-color: #333; color: white; padding: 15px; text-align: center; }
+    nav { text-align: center; margin-top: 10px; }
+    nav a { margin: 0 15px; color: white; text-decoration: none; font-size: 18px; }
+    nav a:hover { text-decoration: underline; }
+    .container { width: 80%; margin: 0 auto; padding: 20px; }
+    .payment-section { display: flex; justify-content: space-between; margin-top: 20px; }
+    .payment-left, .payment-right { width: 48%; }
+    .payment-left h2, .payment-right h2 { color: #333; }
+    .payment-summary { background-color: white; padding: 15px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+    .payment-summary h3 { margin-bottom: 10px; }
+    .payment-summary p { margin: 5px 0; }
+    .payment-summary .total-price { font-size: 20px; font-weight: bold; color: #d9534f; }
+    .gpay-btn-container { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Payment</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="cart.html">Cart</a>
+      <a href="payment.html">Payment</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="payment-section">
+      <div class="payment-left">
+        <h2>Shipping Information</h2>
+        <div class="payment-summary">
+          <h3>Address</h3>
+          <p id="address"></p>
+          <h3>Contact Information</h3>
+          <p id="contact-info"></p>
+        </div>
+      </div>
+
+      <div class="payment-right">
+        <h2>Order Summary</h2>
+        <div class="payment-summary">
+          <h3>Items in your cart</h3>
+          <div id="order-items">
+            <!-- Items will be dynamically inserted here -->
+          </div>
+          <p class="total-price">Total: ₹<span id="total-price">0.00</span></p>
+        </div>
+
+        <!-- Google Pay Button -->
+        <div id="gpay-btn-container" class="gpay-btn-container">
+          <!-- Google Pay button will be rendered here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://pay.google.com/gp/p/js/pay.js" async></script>
+
+  <script>
+    // Function to display cart items and calculate total price
+    function displayOrderItems() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const orderItemsContainer = document.getElementById('order-items');
+      const totalPriceElement = document.getElementById('total-price');
+      
+      let totalPrice = 0;
+      orderItemsContainer.innerHTML = ''; // Clear previous items
+
+      cart.forEach(item => {
+        const itemElement = document.createElement('div');
+        itemElement.innerHTML = `
+          <p>${item.name} - ₹${item.price}</p>
+        `;
+        orderItemsContainer.appendChild(itemElement);
+        totalPrice += item.price;
+      });
+
+      totalPriceElement.textContent = totalPrice.toFixed(2);
+    }
+
+    // Function to display address and contact info
+    function displayShippingInfo() {
+      const shippingInfo = JSON.parse(localStorage.getItem('shippingInfo')) || {};
+      document.getElementById('address').textContent = `${shippingInfo.name}, ${shippingInfo.address}, ${shippingInfo.city}, ${shippingInfo.state}, ${shippingInfo.zipcode}`;
+      document.getElementById('contact-info').textContent = `Email: ${shippingInfo.email}, Phone: ${shippingInfo.phone}`;
+    }
+
+    // Google Pay API integration
+    function onGooglePayLoaded() {
+      const paymentDataRequest = {
+        apiVersion: 2,
+        apiVersionMinor: 0,
+        allowedPaymentMethods: [{
+          type: 'CARD',
+          parameters: {
+            allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+            allowedCardNetworks: ['MASTERCARD', 'VISA'],
+          },
+          tokenizationSpecification: {
+            type: 'PAYMENT_GATEWAY',
+            parameters: {
+              gateway: 'example',
+              gatewayMerchantId: 'exampleMerchantId',
+            },
+          },
+        }],
+        transactionInfo: {
+          totalPriceStatus: 'FINAL',
+          totalPrice: document.getElementById('total-price').textContent,
+          currencyCode: 'INR',
+        },
+        merchantInfo: {
+          merchantName: 'My Store',
+          merchantId: 'exampleMerchantId',
+        },
+      };
+
+      const paymentsClient = new google.payments.api.PaymentsClient({
+        environment: 'TEST',
+      });
+
+      paymentsClient.isReadyToPay(paymentDataRequest)
+        .then(function(response) {
+          if (response.result) {
+            const googlePayButton = paymentsClient.createButton({
+              onClick: onGooglePayButtonClicked,
+            });
+            document.getElementById('gpay-btn-container').appendChild(googlePayButton);
+          }
+        })
+        .catch(function(error) {
+          console.error('Error setting up Google Pay', error);
+        });
+    }
+
+    // Function when Google Pay button is clicked
+    function onGooglePayButtonClicked() {
+      const paymentDataRequest = {
+        apiVersion: 2,
+        apiVersionMinor: 0,
+        allowedPaymentMethods: [{
+          type: 'CARD',
+          parameters: {
+            allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+            allowedCardNetworks: ['MASTERCARD', 'VISA'],
+          },
+          tokenizationSpecification: {
+            type: 'PAYMENT_GATEWAY',
+            parameters: {
+              gateway: 'example',
+              gatewayMerchantId: 'exampleMerchantId',
+            },
+          },
+        }],
+        transactionInfo: {
+          totalPriceStatus: 'FINAL',
+          totalPrice: document.getElementById('total-price').textContent,
+          currencyCode: 'INR',
+        },
+        merchantInfo: {
+          merchantName: 'My Store',
+          merchantId: 'exampleMerchantId',
+        },
+      };
+
+      const paymentsClient = new google.payments.api.PaymentsClient({
+        environment: 'TEST',
+      });
+
+      paymentsClient.loadPaymentData(paymentDataRequest)
+        .then(function(paymentData) {
+          // Handle the payment data (e.g., send to backend to process payment)
+          console.log(paymentData);
+          alert('Payment Successful! Your order has been placed.');
+          // Optionally redirect to an order confirmation page or show success
+        })
+        .catch(function(error) {
+          console.error('Payment failed', error);
+          alert('Payment failed. Please try again.');
+        });
+    }
+
+    // Load Google Pay API
+    window.onload = function() {
+      displayOrderItems();
+      displayShippingInfo();
+      onGooglePayLoaded();
+    };
+  </script>
+</body>
+</html>
